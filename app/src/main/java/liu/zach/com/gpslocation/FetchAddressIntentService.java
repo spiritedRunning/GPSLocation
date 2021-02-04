@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import liu.zach.com.timezoneshow.R;
 
 
 /**
+ * 根据经纬度获取实际地址
+ *
  * Created by zhen.liu on 01,March,2019.
  */
 public class FetchAddressIntentService extends IntentService {
@@ -69,7 +70,7 @@ public class FetchAddressIntentService extends IntentService {
         if (addresses == null || addresses.size()  == 0) {
             if (errorMessage.isEmpty()) {
                 errorMessage = getString(R.string.no_address_found);
-                Log.e(TAG, errorMessage);
+//                Log.e(TAG, errorMessage);
             }
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
         } else {

@@ -2,15 +2,20 @@ package liu.zach.com.gpslocation;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class GPSUtils {
+    private static final String TAG = "GPSUtils";
 
     private static GPSUtils instance;
     private Context mContext;
@@ -61,10 +66,13 @@ public class GPSUtils {
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
 
-        if (providers.contains(LocationManager.GPS_PROVIDER)) { // 使用GPS
-            locationProvider = LocationManager.GPS_PROVIDER;
-        } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) { // 使用wifi
+        if (providers.contains(LocationManager.NETWORK_PROVIDER)) { // 使用wifi
+            Log.i(TAG, "using NETWORK_PROVIDER");
             locationProvider = LocationManager.NETWORK_PROVIDER;
+        } else
+            if (providers.contains(LocationManager.GPS_PROVIDER)) { // 使用GPS
+            Log.i(TAG, "using GPS_PROVIDER");
+            locationProvider = LocationManager.GPS_PROVIDER;
         } else {
             Intent i = new Intent();
             i.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -79,9 +87,39 @@ public class GPSUtils {
 
         }
         //监视地理位置变化
-        locationManager.requestLocationUpdates(locationProvider, 3000, 1, locationListener);
+        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+        locationManager.addGpsStatusListener(gpsStatusListener);
     }
 
+    GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) {
+            switch (event) {
+                case GpsStatus.GPS_EVENT_FIRST_FIX: // 第一次定位
+                    Log.i(TAG, "GPS_EVENT_FIRST_FIX");
+                    break;
+
+                case GpsStatus.GPS_EVENT_SATELLITE_STATUS: // 卫星状态改变
+                    GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+                    int maxSatellites = gpsStatus.getMaxSatellites();
+                    Iterator<GpsSatellite> iters = gpsStatus.getSatellites().iterator();
+                    int count = 0;
+                    while (iters.hasNext() && count <= maxSatellites) {
+                        GpsSatellite s = iters.next();
+                        count++;
+                    }
+                    Log.i(TAG, "Satellite Number:" + count);
+                    break;
+
+                case GpsStatus.GPS_EVENT_STARTED: // 定位启动
+                    Log.i(TAG, "GPS_EVENT_STARTED");
+                    break;
+
+                case GpsStatus.GPS_EVENT_STOPPED: // 定位结束
+                    Log.i(TAG, "GPS_EVENT_STOPPED");
+                    break;
+            }
+        }
+    };
 
     public LocationListener locationListener = new LocationListener() {
 

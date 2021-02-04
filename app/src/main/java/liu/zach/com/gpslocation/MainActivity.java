@@ -2,9 +2,11 @@ package liu.zach.com.gpslocation;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void OnLocationChange(Location location) {
                 if (location != null) {
-                    Log.e(TAG, "change latitude: " + location.getLatitude() + ", longitude: " + location.getLongitude());
+//                    Log.e(TAG, "change latitude: " + location.getLatitude() + ", longitude: " + location.getLongitude());
 
                     lastLocation = location;
                     startIntentService();
@@ -87,13 +89,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayAddressOutput(final String addressText) {
+        Log.i(TAG, "lastLocation info: " + lastLocation.toString());
+
         runOnUiThread(new Runnable() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
-                CharSequence addrInfo = TextUtils.concat("latitude: " +
-                                lastLocation.getLatitude() + ", longitude: " + lastLocation.getLongitude() + "\n",
-                                addressText);
-                address.setText(addrInfo);
+                try {
+                    CharSequence addrInfo = TextUtils.concat("latitude: " + lastLocation.getLatitude() + ", longitude: " + lastLocation.getLongitude() + "\n",
+                            "address: " + addressText + "\n",
+                            "altitude: " + lastLocation.getAltitude() + "\n",
+                            "speed:" + lastLocation.getSpeed() + "\n",
+                            "bearing: " + lastLocation.getBearing() + "\n",
+                            "Accuracy: " + lastLocation.getAccuracy() + "\n",
+                            "VerticalAccuracyMeters: " + lastLocation.getVerticalAccuracyMeters() + "\n",
+                            "BearingAccuracyDegrees: " + lastLocation.getBearingAccuracyDegrees() + "\n",
+                            "SpeedAccuracyMetersPerSecond: " + lastLocation.getSpeedAccuracyMetersPerSecond()
+                    );
+
+                    address.setText(addrInfo);
+                } catch (Error e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
