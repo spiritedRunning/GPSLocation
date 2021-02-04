@@ -66,13 +66,12 @@ public class GPSUtils {
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
 
-        if (providers.contains(LocationManager.NETWORK_PROVIDER)) { // 使用wifi
-            Log.i(TAG, "using NETWORK_PROVIDER");
-            locationProvider = LocationManager.NETWORK_PROVIDER;
-        } else
-            if (providers.contains(LocationManager.GPS_PROVIDER)) { // 使用GPS
+        if (providers.contains(LocationManager.GPS_PROVIDER)) { // 使用GPS
             Log.i(TAG, "using GPS_PROVIDER");
             locationProvider = LocationManager.GPS_PROVIDER;
+        } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) { // 使用wifi
+            Log.i(TAG, "using NETWORK_PROVIDER");
+            locationProvider = LocationManager.NETWORK_PROVIDER;
         } else {
             Intent i = new Intent();
             i.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
