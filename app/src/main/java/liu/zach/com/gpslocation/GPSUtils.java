@@ -69,7 +69,7 @@ public class GPSUtils {
         if (providers.contains(LocationManager.GPS_PROVIDER)) { // 使用GPS
             Log.i(TAG, "using GPS_PROVIDER");
             locationProvider = LocationManager.GPS_PROVIDER;
-        } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) { // 使用wifi
+        } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) { // 使用网络
             Log.i(TAG, "using NETWORK_PROVIDER");
             locationProvider = LocationManager.NETWORK_PROVIDER;
         } else {
@@ -90,6 +90,7 @@ public class GPSUtils {
         locationManager.addGpsStatusListener(gpsStatusListener);
     }
 
+    private int satelliteCount;
     GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener() {
         public void onGpsStatusChanged(int event) {
             switch (event) {
@@ -101,12 +102,12 @@ public class GPSUtils {
                     GpsStatus gpsStatus = locationManager.getGpsStatus(null);
                     int maxSatellites = gpsStatus.getMaxSatellites();
                     Iterator<GpsSatellite> iters = gpsStatus.getSatellites().iterator();
-                    int count = 0;
-                    while (iters.hasNext() && count <= maxSatellites) {
+                    satelliteCount = 0;
+                    while (iters.hasNext() && satelliteCount <= maxSatellites) {
                         GpsSatellite s = iters.next();
-                        count++;
+                        satelliteCount++;
                     }
-                    Log.i(TAG, "Satellite Number:" + count);
+                    Log.i(TAG, "Satellite Number:" + satelliteCount);
                     break;
 
                 case GpsStatus.GPS_EVENT_STARTED: // 定位启动
@@ -144,7 +145,7 @@ public class GPSUtils {
         @Override
         public void onLocationChanged(Location location) {
             if (mOnLocationListener != null) {
-                mOnLocationListener.OnLocationChange(location);
+                mOnLocationListener.OnLocationChange(location, satelliteCount);
             }
         }
     };
@@ -158,6 +159,6 @@ public class GPSUtils {
     public interface OnLocationResultListener {
         void onLocationResult(Location location);
 
-        void OnLocationChange(Location location);
+        void OnLocationChange(Location location, int satelliteCount);
     }
 }
