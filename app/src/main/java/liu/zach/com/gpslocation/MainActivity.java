@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Location curLocation = locationQueue.peekFirst();
                     currentRealTime = SystemClock.elapsedRealtimeNanos();
-                    while (curLocation != null && elapsed2ms(currentRealTime, curLocation) > 2500) {
+                    while (curLocation != null && elapsed2ms(currentRealTime, curLocation) > 3000) {  // 考察3s内的数据
                         if (!locationQueue.isEmpty()) {
                             locationQueue.removeFirst();
                         }
@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
         return duration;
     }
 
-    private static final Float SPEED_CHANGE_THRESHOLD = 25.0f;
-    private static final Float BEARING_CHANGE_THRESHOLD = 60f;
+    private static final Float SPEED_CHANGE_THRESHOLD = 18.03f;
+    private static final Float BEARING_CHANGE_THRESHOLD = 80f;
 
     /**
      * 判断是否急加速或急减速
@@ -188,7 +188,12 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            if (Math.abs(endBearing - startBearing) >= BEARING_CHANGE_THRESHOLD) {
+            float abs = Math.abs(endBearing - startBearing);
+            if (abs >= 300f) { // 在0度附近偏移，视为无效
+                return;
+            }
+
+            if (abs >= BEARING_CHANGE_THRESHOLD) {
                 TTSPlay("急转弯");
             }
         }
