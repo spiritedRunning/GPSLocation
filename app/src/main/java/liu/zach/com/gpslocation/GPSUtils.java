@@ -20,6 +20,7 @@ public class GPSUtils {
     private static GPSUtils instance;
     private Context mContext;
     private LocationManager locationManager;
+    private String locationProvider;
 
     private GPSUtils(Context context) {
         this.mContext = context;
@@ -62,7 +63,7 @@ public class GPSUtils {
     public void getLngAndLat(OnLocationResultListener onLocationResultListener) {
         mOnLocationListener = onLocationResultListener;
 
-        String locationProvider = null;
+        locationProvider = null;
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
 
@@ -85,8 +86,9 @@ public class GPSUtils {
             }
 
         }
+
         //监视地理位置变化
-        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(locationProvider, 1000, 0, locationListener);
         locationManager.addGpsStatusListener(gpsStatusListener);
     }
 
