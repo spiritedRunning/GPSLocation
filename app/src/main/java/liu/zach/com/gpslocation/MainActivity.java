@@ -126,11 +126,10 @@ public class MainActivity extends AppCompatActivity {
         return duration;
     }
 
-    private static final Float SPEED_CHANGE_THRESHOLD = 1.67f;
     private static final Float BEARING_CHANGE_THRESHOLD = 60f;
     private float ACCEL_CRASH_VALUE = 5.6f;
     private float ACCEL_INTENSE_VALUE = 3.34f;
-    private float ACCEL_THREAD_HOLD = 1.67f;
+    private float ACCEL_THRESHOLD = 1.67f;
 
     private int decelCnt = 0, nrlCnt = 0, accelCnt = 0;
 
@@ -157,18 +156,18 @@ public class MainActivity extends AppCompatActivity {
         if (acc > ACCEL_INTENSE_VALUE) {
             decelCnt = 0;
             accelCnt = 0;
-            if (System.currentTimeMillis() - lastAccAlarmTick < 1000) {
+            if (System.currentTimeMillis() - lastAccAlarmTick < 5000) {
                 Log.e(TAG, "ACC_THREAD 两次报警时间太短");
                 return;
             }
             lastAccAlarmTick = System.currentTimeMillis();
             if (realAcc < 0) {
                 Log.e(TAG, "Accer 急减速0");
-                TTSPlay("急减速1");
+                TTSPlay("急减速");
             }
-        } else if (acc > ACCEL_THREAD_HOLD) {
+        } else if (acc > ACCEL_THRESHOLD) {
             if (realAcc > 0) {
-                if (System.currentTimeMillis() - lastAccAlarmTick < 1000) {
+                if (System.currentTimeMillis() - lastAccAlarmTick < 5000) {
                     Log.e(TAG, "ACC_THREAD 两次报警时间太短");
                     return;
                 }
@@ -182,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     accelCnt = 0;
                 }
             } else {
-                if (System.currentTimeMillis() - lastAccAlarmTick < 2000) {
+                if (System.currentTimeMillis() - lastAccAlarmTick < 5000) {
                     Log.e(TAG, "ACC_THREAD 两次报警时间太短");
                     return;
                 }
@@ -192,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 if (decelCnt > 1) {
                     lastAccAlarmTick = System.currentTimeMillis();
                     Log.e(TAG, "Accer 急减速1");
-                    TTSPlay("急减速2");
+                    TTSPlay("正常减速");
                     decelCnt = 0;
                 }
             }
@@ -229,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (rst > BEARING_CHANGE_THRESHOLD && getRealSpeed(location.getSpeed()) > 10) {
+        if (rst > BEARING_CHANGE_THRESHOLD && getRealSpeed(location.getSpeed()) > 20) {
             TTSPlay("急转弯");
         }
     }
