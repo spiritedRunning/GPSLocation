@@ -143,8 +143,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        float startSpeed = speedList.get(0);
+        float endSpeed = speedList.get(1);
+        if (Math.abs(startSpeed - endSpeed) == Math.abs(startSpeed + endSpeed)) {  //gps漂移中或静止
+            return;
+        }
+
         Log.i(TAG, "speedList: " + printList(speedList));
-        float realAcc = (speedList.get(1) - speedList.get(0)) / 3.6f;
+        float realAcc = (endSpeed - startSpeed) / 3.6f;
         float acc = Math.abs(realAcc);
 
         if (acc > ACCEL_CRASH_VALUE) {
@@ -219,16 +225,16 @@ public class MainActivity extends AppCompatActivity {
 
         float startBearing = bearingList.get(0);
         float endBearing = bearingList.get(1);
-        if (startBearing == 0 || endBearing == 0) { // 可能为静止状态，忽略
+        if (Math.abs(startBearing - endBearing) == Math.abs(startBearing + endBearing)) { // gps漂移中或静止
             return;
         }
 
         double rst = Math.abs(endBearing - startBearing);
-        if (rst >= 300f) { // 在0度附近偏移，视为无效
-            return;
+        if (rst >= 330f) { // 在0度附近偏移，视为无效
+            rst = 360 - rst;
         }
 
-        if (rst > BEARING_CHANGE_THRESHOLD && getRealSpeed(location.getSpeed()) > 20) {
+        if (rst > BEARING_CHANGE_THRESHOLD && getRealSpeed(location.getSpeed()) > 30) {
             TTSPlay("急转弯");
         }
     }
