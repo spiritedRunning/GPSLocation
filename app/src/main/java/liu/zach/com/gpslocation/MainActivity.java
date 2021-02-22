@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         return duration;
     }
 
-    private static final Float BEARING_CHANGE_THRESHOLD = 60f;
+    private static final Float BEARING_CHANGE_THRESHOLD = 25.5f;
     private float ACCEL_CRASH_VALUE = 5.6f;
     private float ACCEL_INTENSE_VALUE = 3.34f;
     private float ACCEL_THRESHOLD = 1.67f;
@@ -230,11 +230,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         double rst = Math.abs(endBearing - startBearing);
-        if (rst >= 330f) { // 在0度附近偏移，视为无效
+        if (rst > 340f) { // 在0度附近偏移，视为无效
             rst = 360 - rst;
         }
 
-        if (rst > BEARING_CHANGE_THRESHOLD && getRealSpeed(location.getSpeed()) > 30) {
+        if (rst > BEARING_CHANGE_THRESHOLD && getRealSpeed(location.getSpeed()) >= 30) {
             TTSPlay("急转弯");
         }
     }
