@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // comment 1
+        // comment 2
         if (acc > ACCEL_INTENSE_VALUE) {
             decelCnt = 0;
             accelCnt = 0;
