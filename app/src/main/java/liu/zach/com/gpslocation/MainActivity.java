@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // comment 1 2
         if (acc > ACCEL_INTENSE_VALUE) {
             decelCnt = 0;
             accelCnt = 0;
@@ -213,6 +212,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    // a b c
+
+    // 456
 
     /**
      * 判断是否急转弯
