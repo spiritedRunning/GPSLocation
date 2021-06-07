@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+
             @Override
             public void OnLocationChange(Location location, int count) {
                 if (location != null) {
